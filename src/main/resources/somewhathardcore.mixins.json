@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "mars.somewhathardcore.com.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "somewhathardcore.refmap.json",
+  "mixins": [
+    "PlayerDeath",
+    "EGapEat"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
