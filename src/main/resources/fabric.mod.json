@@ -1,0 +1,33 @@
+{
+	"schemaVersion": 1,
+	"id": "somewhathardcore",
+	"version": "${version}",
+	"name": "You Die You Lose a Heart",
+	"description": "Whenever you die you lose a heart, if you lose all of them you will be forced to go into spectator mode.",
+	"authors": [
+		"Me!"
+	],
+	"contact": {
+		"homepage": "https://legacy.curseforge.com/minecraft/mc-mods/somewhat-hardcore-fabric-forge"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/somewhathardcore/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"mars.somewhathardcore.com.YouDieYouLoseAHeart"
+		]
+	},
+	"mixins": [
+		"somewhathardcore.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.15.10",
+		"minecraft": "~1.20.5",
+		"java": ">=21",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}
