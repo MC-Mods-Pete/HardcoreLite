@@ -1,4 +1,4 @@
-package mars.somewhathardcore.com;
+package net.petemc.hardcorelite.world;
 
 import net.minecraft.world.level.GameRules;
 

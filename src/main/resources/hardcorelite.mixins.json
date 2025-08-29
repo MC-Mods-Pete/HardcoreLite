@@ -1,12 +1,12 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "mars.somewhathardcore.com.mixin",
+  "package": "net.petemc.hardcorelite.mixin",
   "compatibilityLevel": "JAVA_17",
-  "refmap": "somewhathardcore.refmap.json",
+  "refmap": "hardcorelite.refmap.json",
   "mixins": [
     "PlayerDeath",
-    "EGapEat"
+    "EatGoldenApple"
   ],
   "client": [
   ],

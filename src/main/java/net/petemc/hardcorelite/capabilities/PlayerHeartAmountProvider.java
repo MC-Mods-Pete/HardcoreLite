@@ -1,4 +1,4 @@
-package mars.somewhathardcore.com;
+package net.petemc.hardcorelite.capabilities;
 
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -12,23 +12,23 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class PlayerHeartAmountProvider implements ICapabilityProvider, INBTSerializable<CompoundTag> {
-    public static Capability<PlayerHearAmount> PLAYER_HEART_AMOUNT = CapabilityManager.get(new CapabilityToken<PlayerHearAmount>() {});
+    public static Capability<PlayerHearts> PLAYER_HEART_AMOUNT = CapabilityManager.get(new CapabilityToken<PlayerHearts>() {});
 
-    private PlayerHearAmount hearAmount = null;
-    private final LazyOptional<PlayerHearAmount> optional = LazyOptional.of(this::createHeartAmount);
+    private PlayerHearts playerHearts = null;
+    private final LazyOptional<PlayerHearts> playerHeartsLazyOptional = LazyOptional.of(this::createHeartAmount);
 
-    private PlayerHearAmount createHeartAmount(){
-        if(this.hearAmount == null){
-            this.hearAmount = new PlayerHearAmount();
+    private PlayerHearts createHeartAmount() {
+        if (this.playerHearts == null) {
+            this.playerHearts = new PlayerHearts();
         }
 
-        return this.hearAmount;
+        return this.playerHearts;
     }
 
     @Override
-    public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-        if(cap == PLAYER_HEART_AMOUNT){
-            return optional.cast();
+    public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> capability, @Nullable Direction side) {
+        if (capability == PLAYER_HEART_AMOUNT){
+            return playerHeartsLazyOptional.cast();
         }
 
         return LazyOptional.empty();
