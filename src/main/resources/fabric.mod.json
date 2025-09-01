@@ -1,33 +1,39 @@
 {
 	"schemaVersion": 1,
-	"id": "somewhathardcore",
+	"id": "${mod_id}",
 	"version": "${version}",
-	"name": "You Die You Lose a Heart",
+	"name": "${mod_name}",
 	"description": "Whenever you die you lose a heart, if you lose all of them you will be forced to go into spectator mode.",
 	"authors": [
-		"Me!"
+		"Pete MC Mods, mcmods.pete@gmail.com",
+        "Mars"
 	],
 	"contact": {
-		"homepage": "https://legacy.curseforge.com/minecraft/mc-mods/somewhat-hardcore-fabric-forge"
+		"homepage": "https://www.curseforge.com/minecraft/mc-mods/hardcore-lite",
+		"sources": "https://github.com/MC-Mods-Pete/HardcoreLite",
+		"issues": "https://github.com/MC-Mods-Pete/HardcoreLite/issues"
 	},
-	"license": "CC0-1.0",
-	"icon": "assets/somewhathardcore/icon.png",
+	"license": "All rights reserved",
+	"icon": "assets/hardcorelite/hardcorelite.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"mars.somewhathardcore.com.YouDieYouLoseAHeart"
+			"net.petemc.hardcorelite.HardcoreLite"
 		]
 	},
 	"mixins": [
-		"somewhathardcore.mixins.json"
+		"hardcorelite.mixins.json"
 	],
+  "accessWidener" : "hardcorelite.accesswidener",
 	"depends": {
-		"fabricloader": ">=0.15.10",
-		"minecraft": "~1.20.5",
-		"java": ">=21",
-		"fabric-api": "*"
+		"fabricloader": "${fabric_version_range}",
+		"minecraft": "${mc_version_range}",
+		"java": "${java_version_range}",
+		"fabric-api": "*",
+		"cloth-config": ">=${cloth_config_version}"
 	},
 	"suggests": {
+		"modmenu": ">=${modmenu_version}",
 		"another-mod": "*"
 	}
 }
