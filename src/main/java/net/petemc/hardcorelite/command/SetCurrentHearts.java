@@ -38,7 +38,7 @@ public class SetCurrentHearts {
     private int setPlayerHearts(CommandSourceStack source, int numberHearts) throws CommandSyntaxException {
         if (source.getEntity() instanceof ServerPlayer serverPlayer) {
             serverPlayer.getCapability(PlayerHeartAmountProvider.PLAYER_HEART_AMOUNT).ifPresent(playerHearts -> {
-                Level level = serverPlayer.level();
+                Level level = serverPlayer.level;
                 if ((numberHearts >= 1) && (numberHearts <= level.getGameRules().getInt(Gamerules.MAXIMUM_HEARTS))) {
                     playerHearts.setNumberOfHearts(numberHearts - 10);
                     Objects.requireNonNull(serverPlayer.getAttribute(Attributes.MAX_HEALTH)).setBaseValue(20 + playerHearts.getNumberOfHearts() * 2);
@@ -57,7 +57,7 @@ public class SetCurrentHearts {
             for (var target : pTargets) {
                 if (target instanceof ServerPlayer serverPlayer) {
                     serverPlayer.getCapability(PlayerHeartAmountProvider.PLAYER_HEART_AMOUNT).ifPresent(playerHearts -> {
-                        Level level = serverPlayer.level();
+                        Level level = serverPlayer.level;
                         if ((numberHearts >= 1) && (numberHearts <= level.getGameRules().getInt(Gamerules.MAXIMUM_HEARTS))) {
                             playerHearts.setNumberOfHearts(numberHearts - 10);
                             Objects.requireNonNull(serverPlayer.getAttribute(Attributes.MAX_HEALTH)).setBaseValue(20 + playerHearts.getNumberOfHearts() * 2);

@@ -24,7 +24,7 @@ public class ModEvents {
     public static void onAttachCapabilitiesPlayer(AttachCapabilitiesEvent<Entity> event) {
         if(event.getObject() instanceof Player) {
             if(!event.getObject().getCapability(PlayerHeartAmountProvider.PLAYER_HEART_AMOUNT).isPresent()) {
-                event.addCapability(ResourceLocation.fromNamespaceAndPath(HardcoreLite.MOD_ID, "properties"), new PlayerHeartAmountProvider());
+                event.addCapability(new ResourceLocation(HardcoreLite.MOD_ID, "properties"), new PlayerHeartAmountProvider());
             }
         }
     }
