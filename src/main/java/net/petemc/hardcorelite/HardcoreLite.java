@@ -17,8 +17,8 @@ public class HardcoreLite
     // Directly reference a slf4j logger
     public static final Logger LOGGER = LogUtils.getLogger();
 
-    public HardcoreLite(FMLJavaModLoadingContext context) {
-        IEventBus modEventBus = context.getModEventBus();
+    public HardcoreLite() {
+        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
         modEventBus.addListener(this::commonSetup);
 

@@ -1,6 +1,7 @@
 package net.petemc.hardcorelite.capabilities;
 
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -35,14 +36,14 @@ public class PlayerHeartAmountProvider implements ICapabilityProvider, INBTSeria
     }
 
     @Override
-    public CompoundTag serializeNBT() {
+    public CompoundTag serializeNBT(HolderLookup.Provider registryAccess) {
         CompoundTag nbt = new CompoundTag();
         createHeartAmount().saveNBTData(nbt);
         return nbt;
     }
 
     @Override
-    public void deserializeNBT(CompoundTag nbt) {
+    public void deserializeNBT(HolderLookup.Provider registryAccess, CompoundTag nbt) {
         createHeartAmount().loadNBTData(nbt);
     }
 }
