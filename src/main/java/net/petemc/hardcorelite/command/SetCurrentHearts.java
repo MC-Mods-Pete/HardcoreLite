@@ -11,8 +11,9 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.Level;
-import net.petemc.hardcorelite.capabilities.PlayerHeartAmountProvider;
-import net.petemc.hardcorelite.world.Gamerules;
+import net.petemc.hardcorelite.capabilities.PlayerHearts;
+import net.petemc.hardcorelite.util.StateSaverAndLoader;
+import net.petemc.hardcorelite.world.ModGamerules;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -37,17 +38,18 @@ public class SetCurrentHearts {
 
     private int setPlayerHearts(CommandSourceStack source, int numberHearts) throws CommandSyntaxException {
         if (source.getEntity() instanceof ServerPlayer serverPlayer) {
-            serverPlayer.getCapability(PlayerHeartAmountProvider.PLAYER_HEART_AMOUNT).ifPresent(playerHearts -> {
+            PlayerHearts playerHearts = StateSaverAndLoader.getPlayerHearts(serverPlayer);
+            if (playerHearts != null) {
                 Level level = serverPlayer.level();
-                if ((numberHearts >= 1) && (numberHearts <= level.getGameRules().getInt(Gamerules.MAXIMUM_HEARTS))) {
+                if ((numberHearts >= 1) && (numberHearts <= level.getGameRules().getInt(ModGamerules.MAXIMUM_HEARTS))) {
                     playerHearts.setNumberOfHearts(numberHearts - 10);
                     Objects.requireNonNull(serverPlayer.getAttribute(Attributes.MAX_HEALTH)).setBaseValue(20 + playerHearts.getNumberOfHearts() * 2);
                     serverPlayer.setHealth(20 + playerHearts.getNumberOfHearts() * 2);
                     serverPlayer.sendSystemMessage(Component.literal("Changed current hearts of " + serverPlayer.getName().getString() + " to " + numberHearts));
                 } else {
-                    serverPlayer.sendSystemMessage(Component.literal("Value needs to be between 1 and " + level.getGameRules().getInt(Gamerules.MAXIMUM_HEARTS)));
+                    serverPlayer.sendSystemMessage(Component.literal("Value needs to be between 1 and " + level.getGameRules().getInt(ModGamerules.MAXIMUM_HEARTS)));
                 }
-            });
+            }
         }
         return 0;
     }
@@ -56,17 +58,18 @@ public class SetCurrentHearts {
         if (pTargets != null) {
             for (var target : pTargets) {
                 if (target instanceof ServerPlayer serverPlayer) {
-                    serverPlayer.getCapability(PlayerHeartAmountProvider.PLAYER_HEART_AMOUNT).ifPresent(playerHearts -> {
+                    PlayerHearts playerHearts = StateSaverAndLoader.getPlayerHearts(serverPlayer);
+                    if (playerHearts != null) {
                         Level level = serverPlayer.level();
-                        if ((numberHearts >= 1) && (numberHearts <= level.getGameRules().getInt(Gamerules.MAXIMUM_HEARTS))) {
+                        if ((numberHearts >= 1) && (numberHearts <= level.getGameRules().getInt(ModGamerules.MAXIMUM_HEARTS))) {
                             playerHearts.setNumberOfHearts(numberHearts - 10);
                             Objects.requireNonNull(serverPlayer.getAttribute(Attributes.MAX_HEALTH)).setBaseValue(20 + playerHearts.getNumberOfHearts() * 2);
                             serverPlayer.setHealth(20 + playerHearts.getNumberOfHearts() * 2);
                             serverPlayer.sendSystemMessage(Component.literal("Changed current hearts of " + serverPlayer.getName().getString() + " to " + numberHearts));
                         } else {
-                            serverPlayer.sendSystemMessage(Component.literal("Value needs to be between 1 and " + level.getGameRules().getInt(Gamerules.MAXIMUM_HEARTS)));
+                            serverPlayer.sendSystemMessage(Component.literal("Value needs to be between 1 and " + level.getGameRules().getInt(ModGamerules.MAXIMUM_HEARTS)));
                         }
-                    });
+                    }
                 }
             }
         }

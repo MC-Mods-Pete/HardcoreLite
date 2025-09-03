@@ -5,8 +5,8 @@
   "compatibilityLevel": "JAVA_21",
   "refmap": "hardcorelite.mixins-refmap.json",
   "mixins": [
-    "PlayerDeath",
-    "EatGoldenApple"
+    "ServerPlayerMixin",
+    "LivingEntityMixin"
   ],
   "client": [
   ],
