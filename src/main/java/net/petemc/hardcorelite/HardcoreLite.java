@@ -11,6 +11,7 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
+import net.petemc.hardcorelite.util.StateSaverAndLoader;
 import net.petemc.hardcorelite.world.ModGamerules;
 import org.slf4j.Logger;
 
@@ -20,6 +21,8 @@ public class HardcoreLite {
     public static final String MOD_ID = "hardcorelite";
     // Directly reference a slf4j logger
     public static final Logger LOGGER = LogUtils.getLogger();
+
+    public static StateSaverAndLoader serverState = null;
 
     public HardcoreLite(IEventBus modEventBus) {
 
@@ -42,7 +45,10 @@ public class HardcoreLite {
     // You can use SubscribeEvent and let the Event Bus discover methods to call
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
-
+        LOGGER.info("Initializing {} mod", HardcoreLite.MOD_ID);
+        if (HardcoreLite.serverState == null) {
+            HardcoreLite.serverState = StateSaverAndLoader.getServerState(event.getServer());
+        }
     }
 
     // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent

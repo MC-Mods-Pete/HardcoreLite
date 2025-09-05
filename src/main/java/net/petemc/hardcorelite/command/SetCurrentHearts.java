@@ -11,8 +11,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.Level;
+import net.petemc.hardcorelite.HardcoreLite;
 import net.petemc.hardcorelite.capabilities.PlayerHearts;
-import net.petemc.hardcorelite.util.StateSaverAndLoader;
 import net.petemc.hardcorelite.world.ModGamerules;
 
 import java.util.Collection;
@@ -38,7 +38,7 @@ public class SetCurrentHearts {
 
     private int setPlayerHearts(CommandSourceStack source, int numberHearts) throws CommandSyntaxException {
         if (source.getEntity() instanceof ServerPlayer serverPlayer) {
-            PlayerHearts playerHearts = StateSaverAndLoader.getPlayerHearts(serverPlayer);
+            PlayerHearts playerHearts = HardcoreLite.serverState.getPlayerHearts(serverPlayer);
             if (playerHearts != null) {
                 Level level = serverPlayer.level();
                 if ((numberHearts >= 1) && (numberHearts <= level.getGameRules().getInt(ModGamerules.MAXIMUM_HEARTS))) {
@@ -58,7 +58,7 @@ public class SetCurrentHearts {
         if (pTargets != null) {
             for (var target : pTargets) {
                 if (target instanceof ServerPlayer serverPlayer) {
-                    PlayerHearts playerHearts = StateSaverAndLoader.getPlayerHearts(serverPlayer);
+                    PlayerHearts playerHearts = HardcoreLite.serverState.getPlayerHearts(serverPlayer);
                     if (playerHearts != null) {
                         Level level = serverPlayer.level();
                         if ((numberHearts >= 1) && (numberHearts <= level.getGameRules().getInt(ModGamerules.MAXIMUM_HEARTS))) {

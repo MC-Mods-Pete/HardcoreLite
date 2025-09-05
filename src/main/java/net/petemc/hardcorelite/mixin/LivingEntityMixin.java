@@ -8,8 +8,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
+import net.petemc.hardcorelite.HardcoreLite;
 import net.petemc.hardcorelite.capabilities.PlayerHearts;
-import net.petemc.hardcorelite.util.StateSaverAndLoader;
 import net.petemc.hardcorelite.world.ModGamerules;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -26,15 +26,16 @@ public abstract class LivingEntityMixin extends Entity {
 
     @Inject(method = "addEatEffect", at = @At("HEAD"))
     private void addEatEffect(FoodProperties pFoodProperties, CallbackInfo ci) {
-        ServerPlayer serverPlayer = (ServerPlayer) (Object) this;
-        Level level = serverPlayer.level();
-        if (!level.isClientSide){
-            if (pFoodProperties.effects() == Foods.ENCHANTED_GOLDEN_APPLE.effects()) {
-                PlayerHearts playerHearts = StateSaverAndLoader.getPlayerHearts(serverPlayer);
-                if (playerHearts != null) {
-                    if (level.getGameRules().getInt(ModGamerules.MAXIMUM_HEARTS) - 10 >= playerHearts.getNumberOfHearts() + 1 && level.getGameRules().getBoolean(ModGamerules.CAN_RESTORE_HEARTS)) {
-                        playerHearts.addHeartAmount(1);
-                        Objects.requireNonNull((serverPlayer).getAttribute(Attributes.MAX_HEALTH)).setBaseValue(20 + playerHearts.getNumberOfHearts() * 2);
+        Level level = this.level();
+        if (!level.isClientSide) {
+            if (((LivingEntity) (Object) this) instanceof ServerPlayer serverPlayer) {
+                if (pFoodProperties.effects() == Foods.ENCHANTED_GOLDEN_APPLE.effects()) {
+                    PlayerHearts playerHearts = HardcoreLite.serverState.getPlayerHearts(serverPlayer);
+                    if (playerHearts != null) {
+                        if (level.getGameRules().getInt(ModGamerules.MAXIMUM_HEARTS) - 10 >= playerHearts.getNumberOfHearts() + 1 && level.getGameRules().getBoolean(ModGamerules.CAN_RESTORE_HEARTS)) {
+                            playerHearts.addHeartAmount(1);
+                            Objects.requireNonNull(serverPlayer.getAttribute(Attributes.MAX_HEALTH)).setBaseValue(20 + playerHearts.getNumberOfHearts() * 2);
+                        }
                     }
                 }
             }

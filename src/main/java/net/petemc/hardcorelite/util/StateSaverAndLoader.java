@@ -10,22 +10,19 @@ import net.petemc.hardcorelite.capabilities.PlayerHearts;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
-import java.util.Objects;
 import java.util.UUID;
 
 public class StateSaverAndLoader extends SavedData {
     public HashMap<UUID, PlayerHearts> players = new HashMap<>();
 
-    public static PlayerHearts getPlayerHearts(LivingEntity player) {
-        StateSaverAndLoader serverState = getServerState(Objects.requireNonNull(player.level().getServer()));
+    public PlayerHearts getPlayerHearts(LivingEntity player) {
         PlayerHearts playerHearts = null;
         if (player.level().getServer() != null) {
 
             // Either get the player by the uuid, or we don't have data for him yet, make a new player state
-            playerHearts = serverState.players.computeIfAbsent(player.getUUID(), uuid -> new PlayerHearts());
-            HardcoreLite.LOGGER.info("getPlayerHearts: {}", playerHearts.getNumberOfHearts());
+            playerHearts = this.players.computeIfAbsent(player.getUUID(), uuid -> new PlayerHearts());
         }
-        serverState.setDirty();
+        this.setDirty();
         return playerHearts;
     }
 
