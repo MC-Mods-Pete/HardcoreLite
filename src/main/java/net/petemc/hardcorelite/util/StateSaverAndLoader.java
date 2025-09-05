@@ -2,6 +2,7 @@ package net.petemc.hardcorelite.util;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.PersistentState;
 import net.minecraft.world.PersistentStateManager;
@@ -15,20 +16,17 @@ import java.util.UUID;
 public class StateSaverAndLoader extends PersistentState {
     public HashMap<UUID, PlayerHearts> players = new HashMap<>();
 
-    public static PlayerHearts getPlayerHearts(LivingEntity player) {
-        StateSaverAndLoader serverState;
+    public PlayerHearts getPlayerHearts(LivingEntity player) {
         PlayerHearts playerState = null;
-        if (player.getWorld().getServer() != null) {
-            serverState = getServerState(player.getWorld().getServer());
-
+        if (HardcoreLite.serverState != null) {
             // Either get the player by the uuid, or we don't have data for him yet, make a new player state
-            playerState = serverState.players.computeIfAbsent(player.getUuid(), uuid -> new PlayerHearts());
+            playerState = HardcoreLite.serverState.players.computeIfAbsent(player.getUuid(), uuid -> new PlayerHearts());
         }
         return playerState;
     }
 
     @Override
-    public NbtCompound writeNbt(NbtCompound nbt) {
+    public NbtCompound writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         NbtCompound playersNbt = new NbtCompound();
         players.forEach((uuid, playerHearts) -> {
             NbtCompound playerNbt = new NbtCompound();
@@ -42,7 +40,7 @@ public class StateSaverAndLoader extends PersistentState {
         return nbt;
     }
 
-    public static StateSaverAndLoader createFromNbt(NbtCompound tag) {
+    public static StateSaverAndLoader createFromNbt(NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
         StateSaverAndLoader state = new StateSaverAndLoader();
 
         NbtCompound playersNbt = tag.getCompound("players");
@@ -58,6 +56,12 @@ public class StateSaverAndLoader extends PersistentState {
         return state;
     }
 
+    private static PersistentState.Type<StateSaverAndLoader> type = new PersistentState.Type<>(
+            StateSaverAndLoader::new, // If there's no 'StateSaverAndLoader' yet create one
+            StateSaverAndLoader::createFromNbt, // If there is a 'StateSaverAndLoader' NBT, parse it with 'createFromNbt'
+            null // Supposed to be an 'DataFixTypes' enum, but we can just pass null
+    );
+
     /**
      * This function gets the 'PersistentStateManager' and creates or returns the filled in 'StateSaveAndLoader'.
      * It does this by calling 'StateSaveAndLoader::createFromNbt' passing it the previously saved 'NbtCompound' we wrote in 'writeNbt'.
@@ -65,11 +69,10 @@ public class StateSaverAndLoader extends PersistentState {
     public static StateSaverAndLoader getServerState(MinecraftServer server) {
         PersistentStateManager persistentStateManager = server.getWorld(World.OVERWORLD).getPersistentStateManager();
 
-        StateSaverAndLoader state = persistentStateManager.getOrCreate(
-                StateSaverAndLoader::createFromNbt,
-                StateSaverAndLoader::new,
-                HardcoreLite.MOD_ID
-        );
+        // The first time the following 'getOrCreate' function is called, it creates a brand new 'StateSaverAndLoader' and
+        // stores it inside the 'PersistentStateManager'. The subsequent calls to 'getOrCreate' pass in the saved
+        // 'StateSaverAndLoader' NBT on disk to our function 'StateSaverAndLoader::createFromNbt'.
+        StateSaverAndLoader state = persistentStateManager.getOrCreate(type, HardcoreLite.MOD_ID);
 
         // If state is not marked dirty, when Minecraft closes, 'writeNbt' won't be called and therefore nothing will be saved.
         // Technically it's 'cleaner' if you only mark state as dirty when there was actually a change, but the vast majority

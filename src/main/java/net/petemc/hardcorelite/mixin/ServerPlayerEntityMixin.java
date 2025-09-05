@@ -1,8 +1,8 @@
 package net.petemc.hardcorelite.mixin;
 
 import com.mojang.authlib.GameProfile;
+import net.petemc.hardcorelite.HardcoreLite;
 import net.petemc.hardcorelite.capabilities.PlayerHearts;
-import net.petemc.hardcorelite.util.StateSaverAndLoader;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
@@ -27,7 +27,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
 
 	@Inject(method = "onDeath", at = @At("TAIL"))
 	private void onDeath(DamageSource source, CallbackInfo ci) {
-        PlayerHearts playerHearts = StateSaverAndLoader.getPlayerHearts(this);
+        PlayerHearts playerHearts = HardcoreLite.serverState.getPlayerHearts(this);
         playerHearts.addHeartAmount(-1);
         if (20 + playerHearts.getNumberOfHearts() * 2 == 0) {
             changeGameMode(GameMode.SPECTATOR);

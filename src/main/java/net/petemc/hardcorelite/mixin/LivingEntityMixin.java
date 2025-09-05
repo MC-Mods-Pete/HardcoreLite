@@ -1,13 +1,14 @@
 package net.petemc.hardcorelite.mixin;
 
+import net.minecraft.component.type.FoodComponent;
+import net.minecraft.component.type.FoodComponents;
 import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.player.PlayerEntity;
+import net.petemc.hardcorelite.HardcoreLite;
 import net.petemc.hardcorelite.capabilities.PlayerHearts;
-import net.petemc.hardcorelite.util.StateSaverAndLoader;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.world.World;
 import net.petemc.hardcorelite.world.ModGamerules;
 import org.spongepowered.asm.mixin.Mixin;
@@ -24,14 +25,17 @@ public abstract class LivingEntityMixin extends Entity {
     }
 
     @Inject(method = "applyFoodEffects", at = @At("HEAD"))
-	private void applyFoodEffects(ItemStack stack, World world, LivingEntity targetEntity, CallbackInfo ci) {
-        if (!world.isClient){
-            if (stack.getItem() == Items.ENCHANTED_GOLDEN_APPLE){
-                PlayerHearts playerHearts = StateSaverAndLoader.getPlayerHearts(targetEntity);
-                if (playerHearts != null) {
-                    if (world.getGameRules().getInt(ModGamerules.MAXIMUM_HEARTS) - 10 >= playerHearts.getNumberOfHearts() + 1 && world.getGameRules().getBoolean(ModGamerules.CAN_RESTORE_HEARTS)) {
-                        playerHearts.addHeartAmount(1);
-                        Objects.requireNonNull(targetEntity.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)).setBaseValue(20 + playerHearts.getNumberOfHearts() * 2);
+	private void applyFoodEffects(FoodComponent component, CallbackInfo ci) {
+        World world = this.getWorld();
+        if (!world.isClient) {
+            if (((LivingEntity) (Object) this) instanceof PlayerEntity playerEntity) {
+                if (component.effects() == FoodComponents.ENCHANTED_GOLDEN_APPLE.effects()) {
+                    PlayerHearts playerHearts = HardcoreLite.serverState.getPlayerHearts(playerEntity);
+                    if (playerHearts != null) {
+                        if (world.getGameRules().getInt(ModGamerules.MAXIMUM_HEARTS) - 10 >= playerHearts.getNumberOfHearts() + 1 && world.getGameRules().getBoolean(ModGamerules.CAN_RESTORE_HEARTS)) {
+                            playerHearts.addHeartAmount(1);
+                            Objects.requireNonNull(playerEntity.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)).setBaseValue(20 + playerHearts.getNumberOfHearts() * 2);
+                        }
                     }
                 }
             }

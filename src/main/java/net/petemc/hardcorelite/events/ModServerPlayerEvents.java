@@ -3,6 +3,7 @@ package net.petemc.hardcorelite.events;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.petemc.hardcorelite.HardcoreLite;
 import net.petemc.hardcorelite.capabilities.PlayerHearts;
 import net.petemc.hardcorelite.util.StateSaverAndLoader;
 
@@ -23,8 +24,8 @@ public class ModServerPlayerEvents {
     }
 
     public static void executePlayerCopied() {
-        PlayerHearts oldPlayerState = StateSaverAndLoader.getPlayerHearts(pOldPlayer);
-        PlayerHearts newPlayerState = StateSaverAndLoader.getPlayerHearts(pNewPlayer);
+        PlayerHearts oldPlayerState = HardcoreLite.serverState.getPlayerHearts(pOldPlayer);
+        PlayerHearts newPlayerState = HardcoreLite.serverState.getPlayerHearts(pNewPlayer);
         if (oldPlayerState != null) {
             newPlayerState.copyFrom(oldPlayerState);
             if ((20 + oldPlayerState.getNumberOfHearts() * 2) > 0) {
