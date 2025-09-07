@@ -1,71 +1,49 @@
 package net.petemc.hardcorelite.util;
 
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.MinecraftServer;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.saveddata.SavedData;
+import net.minecraft.world.level.saveddata.SavedDataType;
 import net.petemc.hardcorelite.HardcoreLite;
 import net.petemc.hardcorelite.capabilities.PlayerHearts;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
-import java.util.Objects;
+import java.util.Map;
 import java.util.UUID;
 
 public class StateSaverAndLoader extends SavedData {
-    public HashMap<UUID, PlayerHearts> players = new HashMap<>();
+    StateSaverAndLoader(){
+        this (
+                new HashMap<UUID, PlayerHearts>()
+        );
+    }
 
-    public static PlayerHearts getPlayerHearts(LivingEntity player) {
-        StateSaverAndLoader serverState = getServerState(Objects.requireNonNull(player.level().getServer()));
+    StateSaverAndLoader(Map<UUID, PlayerHearts> players) {
+        this.players = new HashMap<>(players);
+    }
+
+    public Map<UUID, PlayerHearts> players = new HashMap<>();
+
+    public static SavedDataType<StateSaverAndLoader> createStateType() {
+        return new SavedDataType<>(HardcoreLite.MOD_ID + "_data", StateSaverAndLoader::new, CODEC, null);
+    }
+
+    public PlayerHearts getPlayerHearts(LivingEntity player) {
         PlayerHearts playerHearts = null;
-        if (player.level().getServer() != null) {
+        if (HardcoreLite.serverState != null) {
 
             // Either get the player by the uuid, or we don't have data for him yet, make a new player state
-            playerHearts = serverState.players.computeIfAbsent(player.getUUID(), uuid -> new PlayerHearts());
-            HardcoreLite.LOGGER.info("getPlayerHearts: {}", playerHearts.getNumberOfHearts());
+            playerHearts = this.players.computeIfAbsent(player.getUUID(), uuid -> new PlayerHearts());
         }
-        serverState.setDirty();
+        this.setDirty();
         return playerHearts;
     }
 
-    @Override
-    public @NotNull CompoundTag save(CompoundTag tag, HolderLookup.@NotNull Provider provider) {
-        CompoundTag playersNbt = new CompoundTag();
-        players.forEach((uuid, playerHearts) -> {
-            CompoundTag playerNbt = new CompoundTag();
-
-            playerNbt.putInt("playerMaxHealth", playerHearts.getNumberOfHearts());
-
-            playersNbt.put(uuid.toString(), playerNbt);
-        });
-        tag.put("players", playersNbt);
-
-        return tag;
-    }
-
-    public static StateSaverAndLoader load(CompoundTag tag, HolderLookup.Provider registries) {
-        StateSaverAndLoader state = new StateSaverAndLoader();
-
-        CompoundTag playersNbt = tag.getCompound("players");
-        playersNbt.getAllKeys().forEach(key -> {
-            PlayerHearts playerHearts = new PlayerHearts();
-
-            playerHearts.setNumberOfHearts(playersNbt.getCompound(key).getInt("playerMaxHealth"));
-
-            UUID uuid = UUID.fromString(key);
-            state.players.put(uuid, playerHearts);
-        });
-        state.setDirty();
-
-        return state;
-    }
-
-    public static Factory<StateSaverAndLoader> factory() {
-        return new Factory<>(StateSaverAndLoader::new, StateSaverAndLoader::load, null);
-    }
-
-    public static StateSaverAndLoader getServerState(MinecraftServer server) {
-        return server.overworld().getDataStorage().computeIfAbsent(factory(), HardcoreLite.MOD_ID);
-    }
+    public static final Codec<StateSaverAndLoader> CODEC = RecordCodecBuilder.create(
+            instance -> instance.group(
+                    Codec.unboundedMap(UUIDUtil.AUTHLIB_CODEC, PlayerHearts.PLAYER_HEARTS_CODEC).fieldOf("players").forGetter(state -> state.players)
+            ).apply(instance, StateSaverAndLoader::new)
+    );
 }

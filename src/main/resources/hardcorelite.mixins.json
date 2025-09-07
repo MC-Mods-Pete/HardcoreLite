@@ -5,8 +5,7 @@
   "compatibilityLevel": "JAVA_21",
   "refmap": "hardcorelite.mixins-refmap.json",
   "mixins": [
-    "ServerPlayerMixin",
-    "LivingEntityMixin"
+    "ServerPlayerMixin"
   ],
   "client": [
   ],
