@@ -49,7 +49,7 @@ public class ModEvents {
     public static void finishUsingItem(LivingEntityUseItemEvent.Finish event) {
         if (event.getEntity() instanceof ServerPlayer serverPlayer) {
             if (serverPlayer.level() instanceof ServerLevel serverLevel) {
-                if (!serverLevel.isClientSide) {
+                if (!serverLevel.isClientSide()) {
                     if (event.getItem().getItem().toString().contains("enchanted_golden_apple")) {
                         PlayerHearts playerHearts = HardcoreLite.serverState.getPlayerHearts(serverPlayer);
                         if (playerHearts != null) {
