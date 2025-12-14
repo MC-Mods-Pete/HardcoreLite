@@ -23,13 +23,13 @@ public class SetCurrentHearts {
 
     public SetCurrentHearts(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("playerhearts")
-                .requires(source -> source.hasPermission(2))
+                .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
                 .then(Commands.argument("numberHearts", IntegerArgumentType.integer(1))
                 .executes((command) -> {
                     return setPlayerHearts(command.getSource(), IntegerArgumentType.getInteger(command, "numberHearts"));
                 })));
         dispatcher.register(Commands.literal("playerhearts")
-                .requires(source -> source.hasPermission(2))
+                .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
                 .then(Commands.argument("numberHearts", IntegerArgumentType.integer(1))
                 .then(Commands.argument("targets", EntityArgument.entities()).executes((command) -> {
                     return setPlayerHearts(command.getSource(), IntegerArgumentType.getInteger(command, "numberHearts"), EntityArgument.getEntities(command, "targets"));
@@ -41,13 +41,13 @@ public class SetCurrentHearts {
             PlayerHearts playerHearts = HardcoreLite.serverState.getPlayerHearts(serverPlayer);
             if (playerHearts != null) {
                 ServerLevel serverLevel = serverPlayer.level();
-                if ((numberHearts >= 1) && (numberHearts <= serverLevel.getGameRules().getInt(ModGamerules.MAXIMUM_HEARTS))) {
+                if ((numberHearts >= 1) && (numberHearts <= serverLevel.getGameRules().get(ModGamerules.MAXIMUM_HEARTS))) {
                     playerHearts.setNumberOfHearts(numberHearts - 10);
                     Objects.requireNonNull(serverPlayer.getAttribute(Attributes.MAX_HEALTH)).setBaseValue(20 + playerHearts.getNumberOfHearts() * 2);
                     serverPlayer.setHealth(20 + playerHearts.getNumberOfHearts() * 2);
                     serverPlayer.sendSystemMessage(Component.literal("Changed current hearts of " + serverPlayer.getName().getString() + " to " + numberHearts));
                 } else {
-                    serverPlayer.sendSystemMessage(Component.literal("Value needs to be between 1 and " + serverLevel.getGameRules().getInt(ModGamerules.MAXIMUM_HEARTS)));
+                    serverPlayer.sendSystemMessage(Component.literal("Value needs to be between 1 and " + serverLevel.getGameRules().get(ModGamerules.MAXIMUM_HEARTS)));
                 }
             }
         }
@@ -61,13 +61,13 @@ public class SetCurrentHearts {
                     PlayerHearts playerHearts = HardcoreLite.serverState.getPlayerHearts(serverPlayer);
                     if (playerHearts != null) {
                         ServerLevel serverLevel = serverPlayer.level();
-                        if ((numberHearts >= 1) && (numberHearts <= serverLevel.getGameRules().getInt(ModGamerules.MAXIMUM_HEARTS))) {
+                        if ((numberHearts >= 1) && (numberHearts <= serverLevel.getGameRules().get(ModGamerules.MAXIMUM_HEARTS))) {
                             playerHearts.setNumberOfHearts(numberHearts - 10);
                             Objects.requireNonNull(serverPlayer.getAttribute(Attributes.MAX_HEALTH)).setBaseValue(20 + playerHearts.getNumberOfHearts() * 2);
                             serverPlayer.setHealth(20 + playerHearts.getNumberOfHearts() * 2);
                             serverPlayer.sendSystemMessage(Component.literal("Changed current hearts of " + serverPlayer.getName().getString() + " to " + numberHearts));
                         } else {
-                            serverPlayer.sendSystemMessage(Component.literal("Value needs to be between 1 and " + serverLevel.getGameRules().getInt(ModGamerules.MAXIMUM_HEARTS)));
+                            serverPlayer.sendSystemMessage(Component.literal("Value needs to be between 1 and " + serverLevel.getGameRules().get(ModGamerules.MAXIMUM_HEARTS)));
                         }
                     }
                 }

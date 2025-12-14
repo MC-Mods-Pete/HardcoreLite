@@ -1,12 +1,16 @@
 package net.petemc.hardcorelite.events;
 
+import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.gamerules.GameRuleCategory;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.registries.RegisterEvent;
 import net.neoforged.neoforge.server.command.ConfigCommand;
 import net.petemc.hardcorelite.capabilities.PlayerHearts;
 import net.petemc.hardcorelite.HardcoreLite;
@@ -46,6 +50,16 @@ public class ModEvents {
     }
 
     @SubscribeEvent
+    public static void registerGamerules(RegisterEvent event) {
+        if (event.getRegistryKey().equals(Registries.GAME_RULE)) {
+            ModGamerules.CAN_RESTORE_HEARTS = GameRules.registerBoolean("can_restore_hearts",
+                    GameRuleCategory.PLAYER, true);
+            ModGamerules.MAXIMUM_HEARTS = GameRules.registerInteger("max_hearts",
+                    GameRuleCategory.PLAYER, 20, 0);
+        }
+    }
+
+    @SubscribeEvent
     public static void finishUsingItem(LivingEntityUseItemEvent.Finish event) {
         if (event.getEntity() instanceof ServerPlayer serverPlayer) {
             if (serverPlayer.level() instanceof ServerLevel serverLevel) {
@@ -53,7 +67,7 @@ public class ModEvents {
                     if (event.getItem().getItem().toString().contains("enchanted_golden_apple")) {
                         PlayerHearts playerHearts = HardcoreLite.serverState.getPlayerHearts(serverPlayer);
                         if (playerHearts != null) {
-                            if (serverLevel.getGameRules().getInt(ModGamerules.MAXIMUM_HEARTS) - 10 >= playerHearts.getNumberOfHearts() + 1 && serverLevel.getGameRules().getBoolean(ModGamerules.CAN_RESTORE_HEARTS)) {
+                            if (serverLevel.getGameRules().get(ModGamerules.MAXIMUM_HEARTS) - 10 >= playerHearts.getNumberOfHearts() + 1 && serverLevel.getGameRules().get(ModGamerules.CAN_RESTORE_HEARTS)) {
                                 playerHearts.addHeartAmount(1);
                                 Objects.requireNonNull((serverPlayer).getAttribute(Attributes.MAX_HEALTH)).setBaseValue(20 + playerHearts.getNumberOfHearts() * 2);
                             }
