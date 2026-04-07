@@ -19,7 +19,7 @@ public class PlayerHearts {
         numberOfHearts = value;
     }
 
-    private int numberOfHearts = 0;
+    private int numberOfHearts;
 
     public void setNumberOfHearts(int val) { numberOfHearts = val; }
 

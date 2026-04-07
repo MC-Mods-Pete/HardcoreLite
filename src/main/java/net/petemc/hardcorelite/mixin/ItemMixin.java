@@ -28,7 +28,7 @@ public abstract class ItemMixin {
                     PlayerHearts playerHearts = HardcoreLite.serverState.getPlayerHearts(serverPlayer);
                     if (playerHearts != null) {
                         if (world instanceof ServerWorld serverLevel) {
-                            if (serverLevel.getGameRules().getInt(ModGamerules.MAXIMUM_HEARTS) - 10 >= playerHearts.getNumberOfHearts() + 1 && serverLevel.getGameRules().getBoolean(ModGamerules.CAN_RESTORE_HEARTS)) {
+                            if (serverLevel.getGameRules().getValue(ModGamerules.MAXIMUM_HEARTS) - 10 >= playerHearts.getNumberOfHearts() + 1 && serverLevel.getGameRules().getValue(ModGamerules.CAN_RESTORE_HEARTS)) {
                                 playerHearts.addHeartAmount(1);
                                 Objects.requireNonNull(serverPlayer.getAttributeInstance(EntityAttributes.MAX_HEALTH)).setBaseValue(20 + playerHearts.getNumberOfHearts() * 2);
                             }

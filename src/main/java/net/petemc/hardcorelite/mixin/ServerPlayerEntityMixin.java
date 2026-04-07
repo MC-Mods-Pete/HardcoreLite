@@ -26,13 +26,16 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
 
 	@Inject(method = "onDeath", at = @At("TAIL"))
 	private void onDeath(DamageSource source, CallbackInfo ci) {
-        PlayerHearts playerHearts = HardcoreLite.serverState.getPlayerHearts(this);
-        playerHearts.addHeartAmount(-1);
-        if (20 + playerHearts.getNumberOfHearts() * 2 == 0) {
-            changeGameMode(GameMode.SPECTATOR);
-            playerHearts.setNumberOfHearts(0);
-        } else {
-            Objects.requireNonNull(this.getAttributeInstance(EntityAttributes.MAX_HEALTH)).setBaseValue(20 + playerHearts.getNumberOfHearts() * 2);
+        ServerPlayerEntity serverPlayer = (ServerPlayerEntity) (Object) this;
+        PlayerHearts playerHearts = HardcoreLite.serverState.getPlayerHearts(serverPlayer);
+        //HardcoreLite.LOGGER.info("PlayerHearts (UUID: " + serverPlayer.getUuidAsString() + ") " + playerHearts.getNumberOfHearts());
+        if (playerHearts != null) {
+            playerHearts.addHeartAmount(-1);
+            if (20 + playerHearts.getNumberOfHearts() * 2 == 0) {
+                changeGameMode(GameMode.SPECTATOR);
+                playerHearts.setNumberOfHearts(0);
+            }
+            Objects.requireNonNull(serverPlayer.getAttributeInstance(EntityAttributes.MAX_HEALTH)).setBaseValue(20 + playerHearts.getNumberOfHearts() * 2);
         }
 	}
 }

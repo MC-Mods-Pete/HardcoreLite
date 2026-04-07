@@ -27,13 +27,13 @@ public class SetCurrentHearts {
 
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher, CommandRegistryAccess commandRegistryAccess, CommandManager.RegistrationEnvironment registrationEnvironment) {
         dispatcher.register(CommandManager.literal("playerhearts")
-                .requires(source -> source.hasPermissionLevel(2))
+                .requires(CommandManager.requirePermissionLevel(CommandManager.GAMEMASTERS_CHECK))
                 .then(CommandManager.argument("numberHearts", IntegerArgumentType.integer(1))
                 .executes((command) -> {
                     return setPlayerHearts(command.getSource(), IntegerArgumentType.getInteger(command, "numberHearts"));
                 })));
         dispatcher.register(CommandManager.literal("playerhearts")
-                .requires(source -> source.hasPermissionLevel(2))
+                .requires(CommandManager.requirePermissionLevel(CommandManager.GAMEMASTERS_CHECK))
                 .then(CommandManager.argument("numberHearts", IntegerArgumentType.integer(1))
                 .then(CommandManager.argument("targets", EntityArgumentType.entities()).executes((command) -> {
                     return setPlayerHearts(command.getSource(), IntegerArgumentType.getInteger(command, "numberHearts"), EntityArgumentType.getEntities(command, "targets"));
@@ -43,14 +43,14 @@ public class SetCurrentHearts {
     private static int setPlayerHearts(ServerCommandSource source, int numberHearts) throws CommandSyntaxException {
         if (source.getEntity() instanceof ServerPlayerEntity serverPlayer) {
             PlayerHearts playerHearts = HardcoreLite.serverState.getPlayerHearts(serverPlayer);
-            ServerWorld serverWorld = serverPlayer.getWorld();
-            if ((numberHearts >= 1) && (numberHearts <= serverWorld.getGameRules().getInt(ModGamerules.MAXIMUM_HEARTS))) {
+            ServerWorld serverWorld = serverPlayer.getEntityWorld();
+            if ((numberHearts >= 1) && (numberHearts <= serverWorld.getGameRules().getValue(ModGamerules.MAXIMUM_HEARTS))) {
                 playerHearts.setNumberOfHearts(numberHearts - 10);
                 Objects.requireNonNull(serverPlayer.getAttributeInstance(EntityAttributes.MAX_HEALTH)).setBaseValue(20 + playerHearts.getNumberOfHearts() * 2);
                 serverPlayer.setHealth(20 + playerHearts.getNumberOfHearts() * 2);
                 serverPlayer.sendMessage(Text.literal("Changed current hearts of " + serverPlayer.getName().getString() + " to " + numberHearts));
             } else {
-                serverPlayer.sendMessage(Text.literal("Value needs to be between 1 and " + serverWorld.getGameRules().getInt(ModGamerules.MAXIMUM_HEARTS)));
+                serverPlayer.sendMessage(Text.literal("Value needs to be between 1 and " + serverWorld.getGameRules().getValue(ModGamerules.MAXIMUM_HEARTS)));
             }
         }
         return 0;
@@ -61,14 +61,14 @@ public class SetCurrentHearts {
             for (var target : pTargets) {
                 if (target instanceof ServerPlayerEntity serverPlayer) {
                     PlayerHearts playerHearts = HardcoreLite.serverState.getPlayerHearts(serverPlayer);
-                    ServerWorld serverWorld = serverPlayer.getWorld();
-                    if ((numberHearts >= 1) && (numberHearts <= serverWorld.getGameRules().getInt(ModGamerules.MAXIMUM_HEARTS))) {
+                    ServerWorld serverWorld = serverPlayer.getEntityWorld();
+                    if ((numberHearts >= 1) && (numberHearts <= serverWorld.getGameRules().getValue(ModGamerules.MAXIMUM_HEARTS))) {
                         playerHearts.setNumberOfHearts(numberHearts - 10);
                         Objects.requireNonNull(serverPlayer.getAttributeInstance(EntityAttributes.MAX_HEALTH)).setBaseValue(20 + playerHearts.getNumberOfHearts() * 2);
                         serverPlayer.setHealth(20 + playerHearts.getNumberOfHearts() * 2);
                         serverPlayer.sendMessage(Text.literal("Changed current hearts of " + serverPlayer.getName().getString() + " to " + numberHearts));
                     } else {
-                        serverPlayer.sendMessage(Text.literal("Value needs to be between 1 and " + serverWorld.getGameRules().getInt(ModGamerules.MAXIMUM_HEARTS)));
+                        serverPlayer.sendMessage(Text.literal("Value needs to be between 1 and " + serverWorld.getGameRules().getValue(ModGamerules.MAXIMUM_HEARTS)));
                     }
                 }
             }
