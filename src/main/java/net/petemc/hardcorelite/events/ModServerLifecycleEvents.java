@@ -18,7 +18,7 @@ public class ModServerLifecycleEvents {
 
     public static void executeServerStarted() {
         if (HardcoreLite.serverState == null) {
-            HardcoreLite.serverState = pServer.getOverworld().getPersistentStateManager().getOrCreate(StateSaverAndLoader.createStateType());
+            HardcoreLite.serverState = pServer.overworld().getDataStorage().computeIfAbsent(StateSaverAndLoader.createStateType());
         }
     }
 

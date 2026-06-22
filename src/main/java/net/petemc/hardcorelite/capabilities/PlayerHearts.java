@@ -2,7 +2,7 @@ package net.petemc.hardcorelite.capabilities;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.CompoundTag;
 
 public class PlayerHearts {
     public static final Codec<PlayerHearts> PLAYER_HEARTS_CODEC = RecordCodecBuilder.create(
@@ -19,7 +19,7 @@ public class PlayerHearts {
         numberOfHearts = value;
     }
 
-    private int numberOfHearts;
+    public int numberOfHearts;
 
     public void setNumberOfHearts(int val) { numberOfHearts = val; }
 
@@ -35,11 +35,11 @@ public class PlayerHearts {
         this.numberOfHearts = source.numberOfHearts;
     }
 
-    public void saveNBTData(NbtCompound nbt){
+    public void saveNBTData(CompoundTag nbt){
         nbt.putInt("numberOfHearts", numberOfHearts);
     }
 
-    public void loadNBTData(NbtCompound nbt){
+    public void loadNBTData(CompoundTag nbt){
         numberOfHearts = nbt.getInt("numberOfHearts").orElse(0);
     }
 }
