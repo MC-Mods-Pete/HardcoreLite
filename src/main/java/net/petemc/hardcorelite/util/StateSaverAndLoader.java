@@ -3,6 +3,7 @@ package net.petemc.hardcorelite.util;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.UUIDUtil;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.saveddata.SavedDataType;
@@ -27,7 +28,7 @@ public class StateSaverAndLoader extends SavedData {
     public Map<UUID, PlayerHearts> players = new HashMap<>();
 
     public static SavedDataType<StateSaverAndLoader> createStateType() {
-        return new SavedDataType<>(HardcoreLite.MOD_ID + "_data", StateSaverAndLoader::new, CODEC, null);
+        return new SavedDataType<>(Identifier.parse(HardcoreLite.MOD_ID + "_data"), StateSaverAndLoader::new, CODEC, null);
     }
 
     public PlayerHearts getPlayerHearts(LivingEntity player) {
