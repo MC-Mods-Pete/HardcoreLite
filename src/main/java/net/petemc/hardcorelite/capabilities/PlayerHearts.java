@@ -1,7 +1,11 @@
 package net.petemc.hardcorelite.capabilities;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraftforge.common.capabilities.AutoRegisterCapability;
 
+@AutoRegisterCapability
 public class PlayerHearts {
     private int numberOfHearts;
 
@@ -25,5 +29,11 @@ public class PlayerHearts {
 
     public void loadNBTData(CompoundTag nbt){
         numberOfHearts = nbt.getInt("numberOfHearts");
+    }
+
+    // Minecraft 1.19.2 has no translatableWithFallback, so all chat texts are English
+    // (same wording as en_us.json in the versions with translatable texts)
+    public static MutableComponent heartsText(int hearts) {
+        return Component.literal(hearts == 1 ? hearts + " heart" : hearts + " hearts");
     }
 }

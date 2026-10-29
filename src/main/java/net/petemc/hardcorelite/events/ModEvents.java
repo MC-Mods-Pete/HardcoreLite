@@ -1,20 +1,25 @@
 package net.petemc.hardcorelite.events;
 
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.GameType;
 import net.minecraftforge.event.RegisterCommandsEvent;
-import net.minecraftforge.server.command.ConfigCommand;
-import net.petemc.hardcorelite.capabilities.PlayerHearts;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.petemc.hardcorelite.capabilities.PlayerHeartAmountProvider;
+import net.petemc.hardcorelite.capabilities.PlayerHearts;
 import net.petemc.hardcorelite.HardcoreLite;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.petemc.hardcorelite.command.SetCurrentHearts;
+import net.petemc.hardcorelite.command.PlayerHeartsCommand;
+import net.petemc.hardcorelite.world.Gamerules;
 
 import java.util.Objects;
 
@@ -26,6 +31,33 @@ public class ModEvents {
             if(!event.getObject().getCapability(PlayerHeartAmountProvider.PLAYER_HEART_AMOUNT).isPresent()) {
                 event.addCapability(new ResourceLocation(HardcoreLite.MOD_ID, "properties"), new PlayerHeartAmountProvider());
             }
+        }
+    }
+
+    // Lowest priority so other mods get the chance to cancel the death (e.g. revive mods) before a heart is taken
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onPlayerDeath(LivingDeathEvent event) {
+        // Only survival and adventure deaths cost a heart: creative deaths (void, /kill while building) are not real deaths,
+        // and spectators already lost all their hearts
+        if (event.getEntity() instanceof ServerPlayer serverPlayer && serverPlayer.gameMode.isSurvival()) {
+            serverPlayer.getCapability(PlayerHeartAmountProvider.PLAYER_HEART_AMOUNT).ifPresent(playerHearts -> {
+                // Only lose a heart above the minimum, so players below it (e.g. after minHearts was raised) never gain hearts by dying
+                int minHearts = Gamerules.getMinimumHearts(serverPlayer.level.getGameRules());
+                if (10 + playerHearts.getNumberOfHearts() <= minHearts) {
+                    serverPlayer.sendSystemMessage(Component.literal("You died, but you can't go below ").append(PlayerHearts.heartsText(minHearts)).withStyle(ChatFormatting.RED));
+                    return;
+                }
+                playerHearts.addHeartAmount(-1);
+                int hearts = 10 + playerHearts.getNumberOfHearts();
+                if (hearts <= 0) {
+                    serverPlayer.setGameMode(GameType.SPECTATOR);
+                    playerHearts.setNumberOfHearts(0);
+                    serverPlayer.server.getPlayerList().broadcastSystemMessage(Component.empty().append(serverPlayer.getDisplayName()).append(" has lost their last heart and is now a spectator").withStyle(ChatFormatting.RED), false);
+                } else {
+                    Objects.requireNonNull(serverPlayer.getAttribute(Attributes.MAX_HEALTH)).setBaseValue(20 + playerHearts.getNumberOfHearts() * 2);
+                    serverPlayer.sendSystemMessage(Component.literal("You lost a heart! ").append(PlayerHearts.heartsText(hearts)).append(" left").withStyle(ChatFormatting.RED));
+                }
+            });
         }
     }
 
@@ -52,14 +84,7 @@ public class ModEvents {
 
 
     @SubscribeEvent
-    public static void onRegisterCapabilities(RegisterCapabilitiesEvent event) {
-        event.register(PlayerHearts.class);
-    }
-
-    @SubscribeEvent
     public static void onCommandsRegister(RegisterCommandsEvent event) {
-        new SetCurrentHearts(event.getDispatcher());
-
-        ConfigCommand.register(event.getDispatcher());
+        PlayerHeartsCommand.register(event.getDispatcher());
     }
 }
