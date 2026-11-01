@@ -1,0 +1,41 @@
+HardcoreLite Changelog
+======================
+
+1.1.0-Fabric-mc1.21.11
+----------------------
+New
+ - New gamerule min_hearts (default 0): players can't go below this amount of hearts
+   - 0: players become spectators when they lose their last heart (same as before)
+   - greater than 0: players never drop below this amount of hearts and are never made spectators
+ - New gamerule golden_apple_restores_hearts (default false): normal golden apples also restore lost hearts,
+   but only up to 10 hearts. Enchanted golden apples still go up to max_hearts.
+ - New command: /playerhearts get [<targets>] shows the current hearts of a player
+   (with a single target the hearts are returned, so the value can be used with /execute store)
+ - New command: /playerhearts set <numberHearts> [<targets>] sets the hearts of a player
+   (the short form /playerhearts <numberHearts> [<targets>] still works)
+ - Chat messages when you lose or gain a heart, and a message to everyone when a player loses their last heart
+ - All chat messages are translatable (players see them in their game language,
+   players without the mod on the client see the English text)
+ - Added German translation
+
+Fixes
+ - Only deaths in survival and adventure mode cost a heart (no more lost hearts in creative or spectator mode, e.g. through /kill or the void)
+ - /playerhearts:
+   - feedback now goes to whoever ran the command (also works from the server console and command blocks)
+   - returns the number of changed players, so it works with /execute store
+   - only accepts players as targets
+   - shows an error when run from the server console without a target
+ - Each singleplayer world now keeps its own hearts (before, the hearts of the first world opened were used
+   in every other world until the game was restarted, and changes made there were lost)
+ - The gamerule descriptions are now shown in the gamerule menu
+ - Enchanted golden apples are detected reliably (before, other items with a similar name could count as one)
+
+Changes
+ - can_restore_hearts is the main switch: when it is false, no golden apple gives hearts
+ - /playerhearts only accepts values between min_hearts (at least 1) and max_hearts
+ - /playerhearts: the target player is notified when someone else changes their hearts
+ - Cloth Config is not needed anymore and no longer bundled with the mod
+
+1.0.0-Fabric-mc1.21.11
+----------------------
+ - Initial release

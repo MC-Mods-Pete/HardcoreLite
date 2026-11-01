@@ -1,0 +1,20 @@
+{
+  "gamerule.minecraft.max_hearts": "Maximale Anzahl an Herzen, die man wiederherstellen kann",
+  "gamerule.minecraft.can_restore_hearts": "Herzen mit verzauberten goldenen Äpfeln wiederherstellen",
+  "gamerule.minecraft.min_hearts": "Minimale Anzahl an Herzen (0 = Zuschauer, wenn alle Herzen verloren sind)",
+  "gamerule.minecraft.golden_apple_restores_hearts": "Normale goldene Äpfel stellen auch verlorene Herzen wieder her (bis 10 Herzen, benötigt can_restore_hearts)",
+
+  "hardcorelite.hearts.one": "%s Herz",
+  "hardcorelite.hearts.many": "%s Herzen",
+
+  "hardcorelite.message.lost_heart": "Du hast ein Herz verloren! Noch %s übrig",
+  "hardcorelite.message.min_hearts_reached": "Du bist gestorben, kannst aber nicht unter %s fallen",
+  "hardcorelite.message.spectator": "%s hat das letzte Herz verloren und ist jetzt Zuschauer",
+  "hardcorelite.message.gained_heart": "Du hast ein Herz bekommen! Jetzt %s",
+
+  "hardcorelite.command.get": "%s hat %s",
+  "hardcorelite.command.set.single": "Herzen von %s auf %s gesetzt",
+  "hardcorelite.command.set.multiple": "Herzen von %s Spielern auf %s gesetzt",
+  "hardcorelite.command.set.target": "Deine Herzen wurden auf %s gesetzt",
+  "hardcorelite.command.set.invalid_value": "Der Wert muss zwischen %s und %s liegen"
+}

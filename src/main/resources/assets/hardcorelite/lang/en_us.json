@@ -1,4 +1,20 @@
 {
-  "gamerule.maxHearts": "Maximum amount of hearts you can restore",
-  "gamerule.canRestoreHearts": "Can you restore hearts with golden enchanted apples"
+  "gamerule.minecraft.max_hearts": "Maximum amount of hearts you can restore",
+  "gamerule.minecraft.can_restore_hearts": "Can you restore hearts with enchanted golden apples",
+  "gamerule.minecraft.min_hearts": "Minimum amount of hearts (0 = become a spectator when all hearts are lost)",
+  "gamerule.minecraft.golden_apple_restores_hearts": "Normal golden apples also restore lost hearts (up to 10 hearts, needs can_restore_hearts)",
+
+  "hardcorelite.hearts.one": "%s heart",
+  "hardcorelite.hearts.many": "%s hearts",
+
+  "hardcorelite.message.lost_heart": "You lost a heart! %s left",
+  "hardcorelite.message.min_hearts_reached": "You died, but you can't go below %s",
+  "hardcorelite.message.spectator": "%s has lost their last heart and is now a spectator",
+  "hardcorelite.message.gained_heart": "You gained a heart! %s",
+
+  "hardcorelite.command.get": "%s has %s",
+  "hardcorelite.command.set.single": "Changed current hearts of %s to %s",
+  "hardcorelite.command.set.multiple": "Changed current hearts of %s players to %s",
+  "hardcorelite.command.set.target": "Your hearts have been set to %s",
+  "hardcorelite.command.set.invalid_value": "Value needs to be between %s and %s"
 }
