@@ -48,6 +48,8 @@ neoForge {
 
             // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            // Fixed name, so the player keeps the same UUID (and the same stored hearts) between test runs
+            programArguments.addAll '--username', 'Dev'
         }
 
         server {

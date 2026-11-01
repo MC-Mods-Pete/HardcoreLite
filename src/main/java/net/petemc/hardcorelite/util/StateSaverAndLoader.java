@@ -15,14 +15,16 @@ import java.util.UUID;
 public class StateSaverAndLoader extends SavedData {
     public HashMap<UUID, PlayerHearts> players = new HashMap<>();
 
-    public PlayerHearts getPlayerHearts(LivingEntity player) {
-        PlayerHearts playerHearts = null;
-        if (player.level().getServer() != null) {
-
-            // Either get the player by the uuid, or we don't have data for him yet, make a new player state
-            playerHearts = this.players.computeIfAbsent(player.getUUID(), uuid -> new PlayerHearts());
+    // Always looked up through the current server, so every world uses its own data (Minecraft caches the loaded state)
+    public static PlayerHearts getPlayerHearts(LivingEntity player) {
+        MinecraftServer server = player.level().getServer();
+        if (server == null) {
+            return null;
         }
-        this.setDirty();
+        StateSaverAndLoader serverState = getServerState(server);
+        // Either get the player by the uuid, or we don't have data for him yet, make a new player state
+        PlayerHearts playerHearts = serverState.players.computeIfAbsent(player.getUUID(), uuid -> new PlayerHearts());
+        serverState.setDirty();
         return playerHearts;
     }
 
