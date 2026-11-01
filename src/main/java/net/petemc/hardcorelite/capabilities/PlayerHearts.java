@@ -3,6 +3,8 @@ package net.petemc.hardcorelite.capabilities;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 
 public class PlayerHearts {
     public static final Codec<PlayerHearts> PLAYER_HEARTS_CODEC = RecordCodecBuilder.create(
@@ -41,5 +43,12 @@ public class PlayerHearts {
 
     public void loadNBTData(CompoundTag nbt){
         numberOfHearts = nbt.getInt("numberOfHearts").orElse(0);
+    }
+
+    // All texts have an English fallback, for players without the mod on the client
+    public static MutableComponent heartsText(int hearts) {
+        return hearts == 1
+                ? Component.translatableWithFallback("hardcorelite.hearts.one", "%s heart", hearts)
+                : Component.translatableWithFallback("hardcorelite.hearts.many", "%s hearts", hearts);
     }
 }

@@ -1,7 +1,7 @@
 plugins {
     id 'java-library'
     id 'maven-publish'
-    id 'net.neoforged.moddev' version '2.0.141'
+    id 'net.neoforged.moddev' version '2.0.148'
     id 'idea'
 }
 
@@ -19,15 +19,6 @@ group = mod_group_id
 
 repositories {
     mavenLocal()
-    maven { url "https://maven.shedaniel.me/"}
-
-    // curse maven
-    maven {
-        url "https://cursemaven.com"
-        content {
-            includeGroup "curse.maven"
-        }
-    }
 }
 
 base {
@@ -52,6 +43,8 @@ neoForge {
 
             // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            // Fixed name, so the player keeps the same UUID (and the same stored hearts) between test runs
+            programArguments.addAll '--username', 'Dev'
         }
 
         server {
@@ -138,8 +131,6 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
 
-    // other mod dependencies
-    runtimeOnly "curse.maven:jade-324717:${jade_version}"
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.
