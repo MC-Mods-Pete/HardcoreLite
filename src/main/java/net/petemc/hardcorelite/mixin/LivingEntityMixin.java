@@ -1,20 +1,24 @@
 package net.petemc.hardcorelite.mixin;
 
 import net.minecraft.component.type.FoodComponent;
-import net.minecraft.component.type.FoodComponents;
 import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.player.PlayerEntity;
-import net.petemc.hardcorelite.HardcoreLite;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
+import net.minecraft.world.GameRules;
 import net.petemc.hardcorelite.capabilities.PlayerHearts;
+import net.petemc.hardcorelite.util.StateSaverAndLoader;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.world.World;
 import net.petemc.hardcorelite.world.ModGamerules;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Objects;
 
@@ -24,21 +28,35 @@ public abstract class LivingEntityMixin extends Entity {
         super(type, world);
     }
 
-    @Inject(method = "applyFoodEffects", at = @At("HEAD"))
-	private void applyFoodEffects(FoodComponent component, CallbackInfo ci) {
-        World world = this.getWorld();
-        if (!world.isClient) {
-            if (((LivingEntity) (Object) this) instanceof PlayerEntity playerEntity) {
-                if (component.effects() == FoodComponents.ENCHANTED_GOLDEN_APPLE.effects()) {
-                    PlayerHearts playerHearts = HardcoreLite.serverState.getPlayerHearts(playerEntity);
-                    if (playerHearts != null) {
-                        if (world.getGameRules().getInt(ModGamerules.MAXIMUM_HEARTS) - 10 >= playerHearts.getNumberOfHearts() + 1 && world.getGameRules().getBoolean(ModGamerules.CAN_RESTORE_HEARTS)) {
-                            playerHearts.addHeartAmount(1);
-                            Objects.requireNonNull(playerEntity.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)).setBaseValue(20 + playerHearts.getNumberOfHearts() * 2);
-                        }
-                    }
-                }
-            }
+    // Since 1.20.5 applyFoodEffects only gets the FoodComponent, eatFood still knows the eaten item
+    // (PlayerEntity.eatFood calls super.eatFood, so this also runs for players)
+    @Inject(method = "eatFood", at = @At("HEAD"))
+    private void eatFood(World world, ItemStack stack, FoodComponent foodComponent, CallbackInfoReturnable<ItemStack> cir) {
+        // Only players, other entities (e.g. foxes) also eat golden apples
+        if (world.isClient || !((Object) this instanceof ServerPlayerEntity serverPlayer)) {
+            return;
         }
-	}
+        GameRules gameRules = world.getGameRules();
+        // canRestoreHearts is the main switch for all apples
+        if (!gameRules.getBoolean(ModGamerules.CAN_RESTORE_HEARTS)) {
+            return;
+        }
+        int maxHearts;
+        if (stack.isOf(Items.ENCHANTED_GOLDEN_APPLE)) {
+            maxHearts = gameRules.getInt(ModGamerules.MAXIMUM_HEARTS);
+        } else if (stack.isOf(Items.GOLDEN_APPLE) && gameRules.getBoolean(ModGamerules.GOLDEN_APPLE_RESTORES_HEARTS)) {
+            // Normal golden apples are cheap, so they only restore lost hearts up to the default of 10
+            maxHearts = Math.min(10, gameRules.getInt(ModGamerules.MAXIMUM_HEARTS));
+        } else {
+            return;
+        }
+
+        PlayerHearts playerHearts = StateSaverAndLoader.getPlayerHearts(serverPlayer);
+        if (playerHearts != null && 10 + playerHearts.getNumberOfHearts() < maxHearts) {
+            playerHearts.addHeartAmount(1);
+            Objects.requireNonNull(serverPlayer.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)).setBaseValue(20 + playerHearts.getNumberOfHearts() * 2);
+            serverPlayer.sendMessage(Text.translatableWithFallback("hardcorelite.message.gained_heart",
+                    "You gained a heart! %s", PlayerHearts.heartsText(10 + playerHearts.getNumberOfHearts())).formatted(Formatting.GREEN));
+        }
+    }
 }

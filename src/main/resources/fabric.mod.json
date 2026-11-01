@@ -3,10 +3,10 @@
 	"id": "${mod_id}",
 	"version": "${version}",
 	"name": "${mod_name}",
-	"description": "Whenever you die you lose a heart, if you lose all of them you will be forced to go into spectator mode.",
+	"description": "Whenever you die you lose a heart, if you lose all of them you will be forced to go into spectator mode. With the gamerule minHearts you can set a minimum amount of hearts instead.",
 	"authors": [
 		"Pete MC Mods, mcmods.pete@gmail.com",
-        "Mars"
+        "Mars (author of original version)"
 	],
 	"contact": {
 		"homepage": "https://www.curseforge.com/minecraft/mc-mods/hardcore-lite",
@@ -29,11 +29,6 @@
       "fabricloader": ">=${loader_version}",
       "minecraft": "${minecraft_version_range}",
       "java": "${java_version_range}",
-      "fabric-api": "*",
-      "cloth-config": ">=${cloth_config_version}"
-	},
-	"suggests": {
-		"modmenu": ">=${modmenu_version}",
-		"another-mod": "*"
+      "fabric-api": "*"
 	}
 }

@@ -1,0 +1,43 @@
+HardcoreLite Changelog
+======================
+
+1.1.0-Fabric-mc1.21
+-------------------
+New
+ - New gamerule minHearts (default 0): players can't go below this amount of hearts
+   - 0: players become spectators when they lose their last heart (same as before)
+   - greater than 0: players never drop below this amount of hearts and are never made spectators
+ - New gamerule goldenAppleRestoresHearts (default false): normal golden apples also restore lost hearts,
+   but only up to 10 hearts. Enchanted golden apples still go up to maxHearts.
+ - New command: /playerhearts get [<targets>] shows the current hearts of a player
+   (with a single target the hearts are returned, so the value can be used with /execute store)
+ - New command: /playerhearts set <numberHearts> [<targets>] sets the hearts of a player
+   (the short form /playerhearts <numberHearts> [<targets>] still works)
+ - Chat messages when you lose or gain a heart, and a message to everyone when a player loses their last heart
+ - All chat messages are translatable (players see them in their game language,
+   players without the mod on the client see the English text)
+ - Added German translation
+
+Fixes
+ - Only deaths in survival and adventure mode cost a heart (no more lost hearts in creative or spectator mode, e.g. through /kill or the void)
+ - /playerhearts:
+   - feedback now goes to whoever ran the command (also works from the server console and command blocks)
+   - returns the number of changed players, so it works with /execute store
+   - only accepts players as targets
+   - shows an error when run from the server console without a target
+ - The mod now only allows Minecraft 1.21 and 1.21.1 (it is not made for 1.21.2 and newer)
+ - Changes to the hearts are always saved now (before, changes made after the first automatic world save
+   were lost when the game or server was closed)
+ - Each singleplayer world now keeps its own hearts (before, the hearts of the first world opened were used
+   in every other world until the game was restarted, and changes made there were lost)
+ - Enchanted golden apples are detected reliably (datapacks or mods that change food could break it before)
+
+Changes
+ - canRestoreHearts is the main switch: when it is false, no golden apple gives hearts
+ - /playerhearts only accepts values between minHearts (at least 1) and maxHearts
+ - /playerhearts: the target player is notified when someone else changes their hearts
+ - Cloth Config is not needed anymore and no longer bundled with the mod
+
+1.0.0-Fabric-mc1.21
+-------------------
+ - Initial release

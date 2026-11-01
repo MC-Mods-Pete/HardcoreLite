@@ -4,7 +4,6 @@
   "package": "net.petemc.hardcorelite.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "ServerPlayerEntityMixin",
     "LivingEntityMixin"
   ],
   "client": [

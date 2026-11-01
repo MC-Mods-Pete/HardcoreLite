@@ -16,11 +16,15 @@ import java.util.UUID;
 public class StateSaverAndLoader extends PersistentState {
     public HashMap<UUID, PlayerHearts> players = new HashMap<>();
 
-    public PlayerHearts getPlayerHearts(LivingEntity player) {
+    // Always looked up through the current server, so every world uses its own data,
+    // and getServerState() marks the state dirty, so every change gets saved
+    public static PlayerHearts getPlayerHearts(LivingEntity player) {
         PlayerHearts playerState = null;
-        if (HardcoreLite.serverState != null) {
+        if (player.getWorld().getServer() != null) {
+            StateSaverAndLoader serverState = getServerState(player.getWorld().getServer());
+
             // Either get the player by the uuid, or we don't have data for him yet, make a new player state
-            playerState = HardcoreLite.serverState.players.computeIfAbsent(player.getUuid(), uuid -> new PlayerHearts());
+            playerState = serverState.players.computeIfAbsent(player.getUuid(), uuid -> new PlayerHearts());
         }
         return playerState;
     }
