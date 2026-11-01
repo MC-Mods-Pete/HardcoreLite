@@ -1,7 +1,6 @@
 package net.petemc.hardcorelite;
 
 import com.mojang.logging.LogUtils;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -22,8 +21,7 @@ public class HardcoreLite
 
         modEventBus.addListener(this::commonSetup);
 
-        MinecraftForge.EVENT_BUS.register(this);
-        MinecraftForge.EVENT_BUS.register(new Gamerules());
+        Gamerules.init();
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
