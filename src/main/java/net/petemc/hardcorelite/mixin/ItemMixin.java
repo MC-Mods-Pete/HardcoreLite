@@ -13,6 +13,7 @@ import net.minecraft.world.rule.GameRules;
 import net.petemc.hardcorelite.capabilities.PlayerHearts;
 import net.petemc.hardcorelite.util.StateSaverAndLoader;
 import net.petemc.hardcorelite.world.ModGamerules;
+import net.petemc.hardcorelite.util.ModTags;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -32,12 +33,13 @@ public abstract class ItemMixin {
             return;
         }
         GameRules gameRules = serverPlayer.getEntityWorld().getGameRules();
-        // canRestoreHearts is the main switch for all apples
+        // canRestoreHearts is the main switch for all items that restore hearts
         if (!gameRules.getValue(ModGamerules.CAN_RESTORE_HEARTS)) {
             return;
         }
         int maxHearts;
-        if (stack.isOf(Items.ENCHANTED_GOLDEN_APPLE)) {
+        // Tagged items come first, so a golden apple added to the tag counts as a full item
+        if (stack.isIn(ModTags.RESTORES_HEARTS)) {
             maxHearts = gameRules.getValue(ModGamerules.MAXIMUM_HEARTS);
         } else if (stack.isOf(Items.GOLDEN_APPLE) && gameRules.getValue(ModGamerules.GOLDEN_APPLE_RESTORES_HEARTS)) {
             // Normal golden apples are cheap, so they only restore lost hearts up to the default of 10
