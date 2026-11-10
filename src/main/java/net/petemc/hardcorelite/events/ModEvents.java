@@ -24,6 +24,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.petemc.hardcorelite.command.PlayerHeartsCommand;
 import net.petemc.hardcorelite.world.Gamerules;
+import net.petemc.hardcorelite.util.ModTags;
 
 import java.util.Objects;
 
@@ -73,14 +74,15 @@ public class ModEvents {
             return;
         }
         GameRules gameRules = serverPlayer.level().getGameRules();
-        // canRestoreHearts is the main switch for all apples
+        // canRestoreHearts is the main switch for all items that restore hearts
         if (!gameRules.getBoolean(Gamerules.CAN_RESTORE_HEARTS)) {
             return;
         }
 
         ItemStack stack = event.getItem();
         int heartLimit;
-        if (stack.is(Items.ENCHANTED_GOLDEN_APPLE)) {
+        // Tagged items come first, so a golden apple added to the tag counts as a full item
+        if (stack.is(ModTags.RESTORES_HEARTS)) {
             heartLimit = gameRules.getInt(Gamerules.MAXIMUM_HEARTS);
         } else if (stack.is(Items.GOLDEN_APPLE) && gameRules.getBoolean(Gamerules.GOLDEN_APPLE_RESTORES_HEARTS)) {
             // Normal golden apples are cheap to craft, so they only give back lost hearts up to the starting 10
