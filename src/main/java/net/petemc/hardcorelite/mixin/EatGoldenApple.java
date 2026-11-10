@@ -6,6 +6,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.server.level.ServerPlayer;
 import net.petemc.hardcorelite.capabilities.PlayerHeartAmountProvider;
 import net.petemc.hardcorelite.capabilities.PlayerHearts;
+import net.petemc.hardcorelite.util.ModTags;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -35,13 +36,14 @@ public abstract class EatGoldenApple extends Entity {
         if (level.isClientSide || !(targetEntity instanceof ServerPlayer serverPlayer)) {
             return;
         }
-        // canRestoreHearts is the main switch for all apples
+        // canRestoreHearts is the main switch for all items that restore hearts
         if (!level.getGameRules().getBoolean(CAN_RESTORE_HEARTS)) {
             return;
         }
 
         int heartLimit;
-        if (stack.is(Items.ENCHANTED_GOLDEN_APPLE)) {
+        // Tagged items come first, so a golden apple added to the tag counts as a full item
+        if (stack.is(ModTags.RESTORES_HEARTS)) {
             heartLimit = level.getGameRules().getInt(MAXIMUM_HEARTS);
         } else if (stack.is(Items.GOLDEN_APPLE) && level.getGameRules().getBoolean(GOLDEN_APPLE_RESTORES_HEARTS)) {
             // Normal golden apples are cheap to craft, so they only give back lost hearts up to the starting 10
