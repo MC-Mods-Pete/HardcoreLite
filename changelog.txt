@@ -1,6 +1,18 @@
 HardcoreLite Changelog
 ======================
 
+1.2.0-Fabric-mc1.21.11
+----------------------
+New
+ - New item tag hardcorelite:restores_hearts: eating an item in this tag restores a heart, up to max_hearts.
+   By default it contains enchanted golden apples.
+ - Datapacks can add their own food items to the tag or remove items from it
+   (data/hardcorelite/tags/item/restores_hearts.json)
+   - a normal golden apple added to the tag restores hearts up to max_hearts, also without golden_apple_restores_hearts
+
+Changes
+ - can_restore_hearts is the main switch for all items in the tag: when it is false, no item gives hearts
+
 1.1.0-Fabric-mc1.21.11
 ----------------------
 New
