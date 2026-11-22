@@ -3,6 +3,7 @@
   "gamerule.minecraft.can_restore_hearts": "Herzen mit verzauberten goldenen Äpfeln wiederherstellen",
   "gamerule.minecraft.min_hearts": "Minimale Anzahl an Herzen (0 = Zuschauer, wenn alle Herzen verloren sind)",
   "gamerule.minecraft.golden_apple_restores_hearts": "Normale goldene Äpfel stellen auch verlorene Herzen wieder her (bis 10 Herzen, benötigt can_restore_hearts)",
+  "gamerule.minecraft.count_modded_hearts": "Dauerhafte Extraherzen anderer Mods (z. B. Herzcontainer) zählen mit, Zuschauer wird man erst, wenn die Herzleiste leer ist",
 
   "hardcorelite.hearts.one": "%s Herz",
   "hardcorelite.hearts.many": "%s Herzen",
