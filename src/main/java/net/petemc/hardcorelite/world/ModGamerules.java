@@ -14,6 +14,8 @@ public class ModGamerules {
 
     public static GameRule<Boolean> GOLDEN_APPLE_RESTORES_HEARTS;
 
+    public static GameRule<Boolean> COUNT_MODDED_HEARTS;
+
     // Negative values count as 0, the minimum can't be above maxHearts
     public static int getMinimumHearts(GameRules gameRules) {
         return Math.max(0, Math.min(gameRules.get(MINIMUM_HEARTS), gameRules.get(MAXIMUM_HEARTS)));
