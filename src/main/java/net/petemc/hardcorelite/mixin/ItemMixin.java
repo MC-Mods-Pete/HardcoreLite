@@ -11,6 +11,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gamerules.GameRules;
 import net.petemc.hardcorelite.capabilities.PlayerHearts;
+import net.petemc.hardcorelite.events.ModServerPlayerEvents;
 import net.petemc.hardcorelite.util.StateSaverAndLoader;
 import net.petemc.hardcorelite.world.ModGamerules;
 import net.petemc.hardcorelite.util.ModTags;
@@ -53,7 +54,7 @@ public abstract class ItemMixin {
             playerHearts.addHeartAmount(1);
             Objects.requireNonNull(serverPlayer.getAttribute(Attributes.MAX_HEALTH)).setBaseValue(20 + playerHearts.getNumberOfHearts() * 2);
             serverPlayer.sendSystemMessage(Component.translatableWithFallback("hardcorelite.message.gained_heart",
-                    "You gained a heart! %s", PlayerHearts.heartsText(10 + playerHearts.getNumberOfHearts())).withStyle(ChatFormatting.GREEN));
+                    "You gained a heart! %s", PlayerHearts.heartsText(ModServerPlayerEvents.shownHearts(serverPlayer, playerHearts, gameRules))).withStyle(ChatFormatting.GREEN));
         }
     }
 }
