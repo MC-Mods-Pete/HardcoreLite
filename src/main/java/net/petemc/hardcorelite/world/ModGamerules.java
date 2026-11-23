@@ -17,6 +17,10 @@ public class ModGamerules {
     public static final GameRules.Key<GameRules.IntegerValue> MINIMUM_HEARTS = GameRules
             .register("minHearts", GameRules.Category.PLAYER, GameRules.IntegerValue.create(0));
 
+    // Permanent flat max health modifiers of other mods (e.g. Paraglider heart containers) count as hearts before becoming a spectator
+    public static final GameRules.Key<GameRules.BooleanValue> COUNT_MODDED_HEARTS = GameRules
+            .register("countModdedHearts", GameRules.Category.PLAYER, GameRules.BooleanValue.create(false));
+
     // minHearts clamped to 0..maxHearts, so invalid gamerule values can't break the heart logic
     public static int getMinimumHearts(GameRules gameRules) {
         return Math.max(0, Math.min(gameRules.getInt(MINIMUM_HEARTS), gameRules.getInt(MAXIMUM_HEARTS)));
