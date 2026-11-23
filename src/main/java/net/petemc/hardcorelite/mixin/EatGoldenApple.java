@@ -6,6 +6,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.server.level.ServerPlayer;
 import net.petemc.hardcorelite.capabilities.PlayerHeartAmountProvider;
 import net.petemc.hardcorelite.capabilities.PlayerHearts;
+import net.petemc.hardcorelite.events.ModEvents;
 import net.petemc.hardcorelite.util.ModTags;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -56,7 +57,7 @@ public abstract class EatGoldenApple extends Entity {
             if (10 + playerHearts.getNumberOfHearts() + 1 <= heartLimit) {
                 playerHearts.addHeartAmount(1);
                 Objects.requireNonNull(serverPlayer.getAttribute(Attributes.MAX_HEALTH)).setBaseValue(20 + playerHearts.getNumberOfHearts() * 2);
-                int hearts = 10 + playerHearts.getNumberOfHearts();
+                int hearts = ModEvents.shownHearts(serverPlayer, playerHearts, level.getGameRules());
                 serverPlayer.sendSystemMessage(Component.translatableWithFallback("hardcorelite.message.gained_heart", "You gained a heart! %s", PlayerHearts.heartsText(hearts)).withStyle(ChatFormatting.GREEN));
             }
         });
