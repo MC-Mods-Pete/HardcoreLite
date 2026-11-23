@@ -1,6 +1,8 @@
 package net.petemc.hardcorelite.events;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
@@ -16,6 +18,8 @@ import net.petemc.hardcorelite.capabilities.PlayerHearts;
 import net.petemc.hardcorelite.HardcoreLite;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
@@ -46,15 +50,18 @@ public class ModEvents {
         // and spectators already lost all their hearts
         if (event.getEntity() instanceof ServerPlayer serverPlayer && serverPlayer.gameMode.isSurvival()) {
             serverPlayer.getCapability(PlayerHeartAmountProvider.PLAYER_HEART_AMOUNT).ifPresent(playerHearts -> {
-                // Only lose a heart above the minimum, so players below it (e.g. after minHearts was raised) never gain hearts by dying
-                int minHearts = Gamerules.getMinimumHearts(serverPlayer.level().getGameRules());
-                if (10 + playerHearts.getNumberOfHearts() <= minHearts) {
+                // Only lose a heart above the minimum, so players below it (e.g. after minHearts was raised) never gain hearts by dying.
+                // Only for a real minimum: with countModdedHearts the own hearts can drop to 0 and below while other mods still give hearts
+                GameRules gameRules = serverPlayer.level().getGameRules();
+                int minHearts = Gamerules.getMinimumHearts(gameRules);
+                if (minHearts > 0 && 10 + playerHearts.getNumberOfHearts() <= minHearts) {
                     serverPlayer.sendSystemMessage(Component.translatableWithFallback("hardcorelite.message.min_hearts_reached", "You died, but you can't go below %s", PlayerHearts.heartsText(minHearts)).withStyle(ChatFormatting.RED));
                     return;
                 }
                 playerHearts.addHeartAmount(-1);
-                int hearts = 10 + playerHearts.getNumberOfHearts();
-                if (hearts <= 0) {
+                int hearts = shownHearts(serverPlayer, playerHearts, gameRules);
+                // With a minimum above 0 nobody becomes a spectator, even if other mods take away more hearts
+                if (hearts <= 0 && minHearts == 0) {
                     serverPlayer.setGameMode(GameType.SPECTATOR);
                     playerHearts.setNumberOfHearts(0);
                     serverPlayer.server.getPlayerList().broadcastSystemMessage(Component.translatableWithFallback("hardcorelite.message.spectator","%s has lost their last heart and is now a spectator", serverPlayer.getDisplayName()).withStyle(ChatFormatting.RED), false);
@@ -64,6 +71,29 @@ public class ModEvents {
                 }
             });
         }
+    }
+
+    // Hearts for the messages and the spectator check. With countModdedHearts these are the hearts in the health bar:
+    // own hearts plus permanent flat max health modifiers of other mods (e.g. Paraglider heart containers), which can also be negative.
+    // Transient modifiers (armor, effects) and multipliers don't count, taking off armor must not cost a life.
+    private static int shownHearts(ServerPlayer serverPlayer, PlayerHearts playerHearts, GameRules gameRules) {
+        if (!gameRules.getBoolean(Gamerules.COUNT_MODDED_HEARTS)) {
+            return 10 + playerHearts.getNumberOfHearts();
+        }
+        double health = 20 + playerHearts.getNumberOfHearts() * 2;
+        AttributeInstance maxHealth = serverPlayer.getAttribute(Attributes.MAX_HEALTH);
+        if (maxHealth != null) {
+            // Minecraft 1.21 has no getter for the permanent modifiers, save() writes exactly these (the ones kept in the player data)
+            ListTag modifiers = maxHealth.save().getList("modifiers", Tag.TAG_COMPOUND);
+            for (int i = 0; i < modifiers.size(); i++) {
+                AttributeModifier modifier = AttributeModifier.load(modifiers.getCompound(i));
+                if (modifier != null && modifier.operation() == AttributeModifier.Operation.ADD_VALUE) {
+                    health += modifier.amount();
+                }
+            }
+        }
+        // A half heart in the bar still counts as a heart
+        return (int) Math.ceil(health / 2);
     }
 
     // Fired after an item was used up, the event item is a copy from before it was eaten
@@ -95,7 +125,7 @@ public class ModEvents {
             if (10 + playerHearts.getNumberOfHearts() + 1 <= heartLimit) {
                 playerHearts.addHeartAmount(1);
                 Objects.requireNonNull(serverPlayer.getAttribute(Attributes.MAX_HEALTH)).setBaseValue(20 + playerHearts.getNumberOfHearts() * 2);
-                int hearts = 10 + playerHearts.getNumberOfHearts();
+                int hearts = shownHearts(serverPlayer, playerHearts, gameRules);
                 serverPlayer.sendSystemMessage(Component.translatableWithFallback("hardcorelite.message.gained_heart", "You gained a heart! %s", PlayerHearts.heartsText(hearts)).withStyle(ChatFormatting.GREEN));
             }
         });
