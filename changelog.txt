@@ -1,6 +1,13 @@
 HardcoreLite Changelog
 ======================
 
+1.3.0-Fabric-mc1.21
+-------------------
+New
+ - New game rule countModdedHearts (off by default): permanent extra hearts from other mods,
+   e.g. Paraglider heart containers, count too. You only become a spectator when the health bar is empty.
+   Armor and potion effects don't count. maxHearts, minHearts and /playerhearts still only count the mod's own hearts.
+
 1.2.0-Fabric-mc1.21
 -------------------
 New
