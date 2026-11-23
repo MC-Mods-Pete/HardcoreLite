@@ -3,6 +3,7 @@
   "gamerule.canRestoreHearts": "Can you restore hearts with enchanted golden apples",
   "gamerule.minHearts": "Minimum amount of hearts (0 = become a spectator when all hearts are lost)",
   "gamerule.goldenAppleRestoresHearts": "Normal golden apples also restore lost hearts (up to 10 hearts, needs canRestoreHearts)",
+  "gamerule.countModdedHearts": "Permanent extra hearts from other mods (e.g. heart containers) count too, you become a spectator when the health bar is empty",
 
   "hardcorelite.hearts.one": "%s heart",
   "hardcorelite.hearts.many": "%s hearts",
