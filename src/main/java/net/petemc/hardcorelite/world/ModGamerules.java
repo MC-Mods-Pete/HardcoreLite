@@ -19,6 +19,10 @@ public class ModGamerules {
     public static final GameRules.Key<GameRules.BooleanRule> GOLDEN_APPLE_RESTORES_HEARTS = GameRuleRegistry
             .register("goldenAppleRestoresHearts", GameRules.Category.PLAYER, GameRuleFactory.createBooleanRule(false));
 
+    // Permanent flat max health modifiers of other mods (e.g. Paraglider heart containers) count as hearts before becoming a spectator
+    public static final GameRules.Key<GameRules.BooleanRule> COUNT_MODDED_HEARTS = GameRuleRegistry
+            .register("countModdedHearts", GameRules.Category.PLAYER, GameRuleFactory.createBooleanRule(false));
+
     // Negative values count as 0, the minimum can't be above maxHearts
     public static int getMinimumHearts(GameRules gameRules) {
         return Math.max(0, Math.min(gameRules.getInt(MINIMUM_HEARTS), gameRules.getInt(MAXIMUM_HEARTS)));

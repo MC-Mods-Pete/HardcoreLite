@@ -7,6 +7,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.world.GameRules;
 import net.petemc.hardcorelite.capabilities.PlayerHearts;
+import net.petemc.hardcorelite.events.ModServerPlayerEvents;
 import net.petemc.hardcorelite.util.StateSaverAndLoader;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -58,7 +59,7 @@ public abstract class LivingEntityMixin extends Entity {
             playerHearts.addHeartAmount(1);
             Objects.requireNonNull(serverPlayer.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH)).setBaseValue(20 + playerHearts.getNumberOfHearts() * 2);
             serverPlayer.sendMessage(Text.translatableWithFallback("hardcorelite.message.gained_heart",
-                    "You gained a heart! %s", PlayerHearts.heartsText(10 + playerHearts.getNumberOfHearts())).formatted(Formatting.GREEN));
+                    "You gained a heart! %s", PlayerHearts.heartsText(ModServerPlayerEvents.shownHearts(serverPlayer, playerHearts, gameRules))).formatted(Formatting.GREEN));
         }
     }
 }
